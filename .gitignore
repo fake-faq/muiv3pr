@@ -1,0 +1,26 @@
+# Рабочая папка блокнотов: статьи, результаты base и модулей, граф, свои модули
+work/
+
+# Статьи и данные в репозиторий не кладутся
+*.pdf
+*.nt
+*.faiss
+*.npy
+
+# Python и Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Учётные данные: только в секретах Colab и переменных окружения
+.env
+*.key
+secrets*.json
+credentials*.json
+
+# Служебные файлы
+.DS_Store
+Thumbs.db
+.claude/

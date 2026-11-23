@@ -1,0 +1,7 @@
+pymupdf
+razdel
+pysbd
+pymorphy3
+pymorphy3-dicts-ru
+rdflib
+pyoxigraph

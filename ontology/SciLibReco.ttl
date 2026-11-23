@@ -1,0 +1,878 @@
+@prefix moc: <https://w3id.org/mocassinplus/ontology#> .
+@prefix mp: <https://w3id.org/mocassinplus/resource/> .
+@prefix scilibreco: <https://scilib.ai/ontology/scilibreco#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# Онтология SciLibReco — модуль scilibreco поверх MocassinPlus v2.
+#
+# Соглашение об IRI:
+#   термин   https://scilib.ai/ontology/scilibreco#<Имя>      (классы, свойства, экземпляры)
+#   модуль   https://scilib.ai/ontology/scilibreco
+#   версия   https://scilib.ai/ontology/scilibreco/<версия>
+#
+# MocassinPlus v2 (MocassinPlus_v2.ttl рядом) импортируется без единого
+# изменения. Всё, что добавляет SciLibReco, объявлено здесь, в пространстве имён
+# scilibreco: — термины и экземпляры ролей. Аксиомы о терминах v2 только
+# добавляются: подклассы, подсвойства, непересекаемость корневых классов.
+# Изменить или отменить аксиому v2 отсюда нельзя (OWL монотонна), поэтому там,
+# где v2 мешает, SciLibReco заводит свой термин: moc:hasLanguage имеет домен
+# DocumentSegment, и язык документа публикуется свойством scilibreco:hasLanguage.
+#
+# Девять типов объектов SciLibReco: document — moc:Document, formula —
+# moc:Formula, theorem — moc:MathematicalStatement и его подклассы (классы v2);
+# author, reviewer, publishing_platform, keyword, subject_area, user_request —
+# классы scilibreco:. Остальные классы MocassinPlus не тронуты.
+#
+# Справочники — экземпляры в графе ABox, а не в этом файле: категории arXiv
+# (SubjectArea, загрузка с arxiv.org) и классы УДК (UDCClass, справочник UDC
+# Summary); статья связана с ними hasSubjectArea и hasUDCClass.
+
+<https://scilib.ai/ontology/scilibreco>
+    a owl:Ontology ;
+    owl:imports <https://w3id.org/mocassinplus/ontology> ;
+    owl:versionIRI <https://scilib.ai/ontology/scilibreco/2.1.0> ;
+    owl:versionInfo "2.1.0" ;
+    rdfs:label "SciLibReco — онтология корпуса поверх MocassinPlus v2"@ru ;
+    rdfs:label "SciLibReco — corpus ontology on top of MocassinPlus v2"@en ;
+    dcterms:title "SciLibReco 2.1"@ru ;
+    dcterms:title "SciLibReco 2.1"@en ;
+    dcterms:description "Модуль scilibreco поверх MocassinPlus v2: люди и их роли (Person — общий класс автора, рецензента и участников системы), организации, площадки публикации, ключевые слова, предметные области (таксономия arXiv), классы УДК, научные понятия, годы, ревизии извлечения и связи для подбора рецензентов. MocassinPlus v2 импортируется без изменений."@ru ;
+    dcterms:description "The scilibreco module on top of MocassinPlus v2: people and their roles (Person is the common class of author, reviewer and system participants), organisations, publishing platforms, keywords, subject areas (arXiv taxonomy), UDC classes, scientific concepts, years, extraction revisions and the relations used for reviewer selection. MocassinPlus v2 is imported unchanged."@en ;
+    dcterms:modified "2026-10-31"^^xsd:date .
+
+#################################################################
+# Annotation properties
+#################################################################
+
+# Аннотационные свойства Dublin Core, которыми описаны заголовки онтологий.
+# Без явного объявления объединение с v2 не входит в профиль OWL 2 DL.
+dcterms:title a owl:AnnotationProperty .
+dcterms:description a owl:AnnotationProperty .
+dcterms:modified a owl:AnnotationProperty .
+
+scilibreco:alignedWith a owl:AnnotationProperty ;
+    rdfs:label "aligned with"@en ;
+    rdfs:label "соответствует внешнему термину"@ru ;
+    rdfs:comment "Ссылка на близкий по смыслу термин внешнего словаря (FOAF, Dublin Core, BIBO, SKOS, PROV-O, SALT). Аннотация, а не аксиома: внешние словари не импортируются, и вывод по ним не выполняется."@ru .
+
+scilibreco:usageNote a owl:AnnotationProperty ;
+    rdfs:label "usage note"@en ;
+    rdfs:label "как использует SciLibReco"@ru ;
+    rdfs:comment "Как система SciLibReco использует термин MocassinPlus v2. Отдельное свойство, а не rdfs:comment: описания терминов v2 остаются такими, какими их написали авторы."@ru .
+
+#################################################################
+# Термины MocassinPlus v2 в SciLibReco
+#################################################################
+
+# Только аннотации и факты о ролях v2; аксиомы v2 не меняются.
+
+moc:Document
+    scilibreco:usageNote "Научный материал с постоянным IRI: статья, выпуск, книга. В SciLibReco — объект типа document; адресуется каноническим IRI, а не путём к файлу."@ru ;
+    scilibreco:alignedWith <http://purl.org/ontology/bibo/Document> .
+
+moc:DocumentPart
+    scilibreco:usageNote "Часть документа любого уровня. Не пересекается с публикацией: документ не является собственной частью."@ru .
+
+moc:Formula
+    scilibreco:usageNote "Формула как смысловая единица. В SciLibReco — объект типа formula: опознаётся по канонической форме записи (hasNormalizedText), поэтому одна формула из разных документов и в разных нотациях — одна вершина с несколькими представлениями (hasVariantForm)."@ru .
+
+moc:MathematicalStatement
+    scilibreco:usageNote "Утверждение документа: теорема, лемма, предложение, следствие, определение, гипотеза. В SciLibReco — объект типа theorem; опознаётся по нормализованному тексту, поэтому одно утверждение, встреченное в нескольких документах, остаётся одной вершиной."@ru .
+
+moc:Publication
+    scilibreco:alignedWith <http://salt.semanticauthoring.org/ontologies/sdo#Publication> .
+
+moc:Statement
+    scilibreco:usageNote "Короткое имя класса MathematicalStatement, оставленное для совместимости с исходной Mocassin."@ru .
+
+moc:containsExpression
+    scilibreco:usageNote "Сегмент содержит математическое выражение. Этой связью SciLibReco соединяет утверждение с формулами его формулировки."@ru .
+
+moc:dependsOn
+    scilibreco:usageNote "Сегмент использует другой как существенный предварительный факт (исходная Mocassin). Транзитивно: зависимости выводятся замыканием. Если утверждение второго сегмента неверно, под сомнением оказываются утверждения первого."@ru .
+
+moc:exemplifies
+    scilibreco:usageNote "Связь примера с сегментом, который он иллюстрирует (исходная Mocassin)."@ru .
+
+moc:hasConsequence
+    scilibreco:usageNote "Связь утверждения с его следствием (исходная Mocassin). Направление — от посылки к следствию."@ru .
+
+moc:hasFunctionalRole
+    scilibreco:usageNote "Строковая роль сегмента, как она прочитана в источнике (theorem, lemma, «следствие»). Класс сегмента выводится правилом через экземпляры FunctionalRole: метка или синоним роли (hasRoleLabel, hasRoleSynonym) сопоставляется со значением без учёта регистра, целевой класс берётся из mapsToClass."@ru .
+
+moc:hasLanguage
+    scilibreco:usageNote "Домен v2 — DocumentSegment, поэтому SciLibReco пишет этим свойством язык только сегментов; язык документа, ключевого слова, площадки и человека — scilibreco:hasLanguage."@ru .
+
+moc:hasPart
+    scilibreco:usageNote "Отношение «часть — целое» между сегментами (исходная Mocassin). Домен и диапазон намеренно не заданы: частью бывают и сегменты, и рисунки, и таблицы."@ru .
+
+moc:hasSegment
+    scilibreco:usageNote "Публикация содержит сегмент. Отношение «многие ко многим»: сегмент с тождеством (формула, утверждение), найденный в нескольких публикациях, связан с каждой из них. SciLibReco публикует уточняющие подсвойства containsFormula и containsStatement."@ru .
+
+moc:proves
+    scilibreco:usageNote "Связь доказательства с утверждением, которое оно обосновывает (исходная Mocassin)."@ru .
+
+moc:refersTo
+    scilibreco:usageNote "Один сегмент содержит ссылку на другой (исходная Mocassin): навигационная связь, извлекаемая из явных перекрёстных ссылок."@ru .
+
+mp:DefinitionRole
+    moc:hasRoleSynonym "defn" .
+
+mp:EquationRole
+    moc:hasRoleSynonym "eq" .
+
+#################################################################
+# Роли SciLibReco
+#################################################################
+
+# Роли сверх восьми ролей v2. В v2 значение «формула» относилось правилом
+# к классу Equation, хотя уравнение — частный случай формулы; у формулы своя
+# роль. Роли Proposition и Claim нужны экстрактору SciLibReco: он распознаёт
+# заголовки «предложение», «утверждение», proposition.
+
+scilibreco:FormulaRole a moc:FunctionalRole ;
+    rdfs:label "Formula role"@en ;
+    moc:hasRoleLabel "formula" ;
+    moc:hasRoleSynonym "формула" ;
+    moc:mapsToClass moc:Formula .
+
+scilibreco:PropositionRole a moc:FunctionalRole ;
+    rdfs:label "Proposition role"@en ;
+    moc:hasRoleLabel "proposition" ;
+    moc:hasRoleSynonym "prop" ;
+    moc:hasRoleSynonym "предложение" ;
+    moc:mapsToClass moc:Proposition .
+
+scilibreco:ClaimRole a moc:FunctionalRole ;
+    rdfs:label "Claim role"@en ;
+    moc:hasRoleLabel "claim" ;
+    moc:hasRoleSynonym "утверждение" ;
+    moc:mapsToClass moc:Claim .
+
+scilibreco:AxiomRole a moc:FunctionalRole ;
+    rdfs:label "Axiom role"@en ;
+    moc:hasRoleLabel "axiom" ;
+    moc:hasRoleSynonym "аксиома" ;
+    moc:mapsToClass moc:Axiom .
+
+scilibreco:ConjectureRole a moc:FunctionalRole ;
+    rdfs:label "Conjecture role"@en ;
+    moc:hasRoleLabel "conjecture" ;
+    moc:hasRoleSynonym "hypothesis" ;
+    moc:hasRoleSynonym "гипотеза" ;
+    moc:mapsToClass moc:Conjecture .
+
+scilibreco:StatementRole a moc:FunctionalRole ;
+    rdfs:label "Statement role"@en ;
+    moc:hasRoleLabel "statement" ;
+    moc:mapsToClass moc:MathematicalStatement .
+
+#################################################################
+#################################################################
+#
+# БИБЛИОГРАФИЧЕСКИЙ СЛОЙ SCILIBRECO
+#
+# Исходная Mocassin описывает только логическую структуру документа;
+# метаданные публикации её авторы выносили во внешнюю онтологию (AKT
+# Portal). SciLibReco публикует девять типов объектов, поэтому недостающие
+# понятия объявлены здесь, в пространстве имён scilibreco:. Точка стыка слоёв —
+# moc:Publication: к ней привязаны и сегменты (moc:hasSegment), и
+# библиографические связи (scilibreco:hasAuthor, scilibreco:publishedIn, …).
+#
+# Соглашение о литералах: значения свойств scilibreco: и moc: публикуются без
+# метки языка (диапазон xsd:string не включает литералы с меткой), язык
+# объекта задаётся свойством scilibreco:hasLanguage; подпись с меткой языка —
+# rdfs:label.
+#
+#################################################################
+#################################################################
+
+#################################################################
+# SciLibReco: classes
+#################################################################
+
+scilibreco:Person a owl:Class ;
+    rdfs:label "Person"@en ;
+    rdfs:label "Персона"@ru ;
+    rdfs:comment "Персона — общий предок всех людей системы: автор или рецензент, извлечённый из документа, либо участник системы с учётной записью. Роли выражаются подклассами; одна персона может иметь несколько ролей."@ru ;
+    scilibreco:alignedWith <http://xmlns.com/foaf/0.1/Person> .
+
+scilibreco:Author a owl:Class ;
+    rdfs:subClassOf scilibreco:Person ;
+    rdfs:label "Author"@en ;
+    rdfs:label "Автор"@ru ;
+    rdfs:comment "Автор публикации. В SciLibReco — объект типа author; опознаётся по адресу почты, затем по ORCID, затем по строгому ключу имени. Кандидаты в рецензенты отбираются из авторов."@ru .
+
+scilibreco:Reviewer a owl:Class ;
+    rdfs:subClassOf scilibreco:Person ;
+    rdfs:label "Reviewer"@en ;
+    rdfs:label "Рецензент"@ru ;
+    rdfs:comment "Рецензент публикации. В SciLibReco — объект типа reviewer либо роль участника системы."@ru .
+
+scilibreco:Administrator a owl:Class ;
+    rdfs:subClassOf scilibreco:Person ;
+    rdfs:label "Administrator"@en ;
+    rdfs:label "Администратор"@ru ;
+    rdfs:comment "Роль участника системы SciLibReco: управление пользователями и всеми разделами."@ru .
+
+scilibreco:DataOperator a owl:Class ;
+    rdfs:subClassOf scilibreco:Person ;
+    rdfs:label "Data operator"@en ;
+    rdfs:label "Оператор данных"@ru ;
+    rdfs:comment "Роль участника системы SciLibReco: управление извлечением данных и хранилищами."@ru .
+
+scilibreco:Reader a owl:Class ;
+    rdfs:subClassOf scilibreco:Person ;
+    rdfs:label "Reader"@en ;
+    rdfs:label "Читатель"@ru ;
+    rdfs:comment "Роль участника системы SciLibReco: просмотр объектов и рекомендаций."@ru .
+
+scilibreco:Editor a owl:Class ;
+    rdfs:subClassOf scilibreco:Person ;
+    rdfs:label "Editor"@en ;
+    rdfs:label "Редактор"@ru ;
+    rdfs:comment "Роль участника системы SciLibReco: ведёт поступившие статьи, подбирает и назначает рецензентов (ребро scilibreco:hasReviewer)."@ru .
+
+scilibreco:Organization a owl:Class ;
+    rdfs:label "Organization"@en ;
+    rdfs:label "Организация"@ru ;
+    rdfs:comment "Организация, с которой связан человек (аффилиация). Отдельная вершина, а не строка у автора: только так можно проверить, что автор и рецензент не работают в одной организации. Опознаётся по нормализованному названию либо по домену служебной почты."@ru ;
+    scilibreco:alignedWith <http://xmlns.com/foaf/0.1/Organization> .
+
+scilibreco:PublishingPlatform a owl:Class ;
+    rdfs:label "Publishing platform"@en ;
+    rdfs:label "Площадка публикации"@ru ;
+    rdfs:comment "Журнал, труды конференции, сборник, серия или издательство, где опубликован документ. В SciLibReco — объект типа publishing_platform; опознаётся по ISSN, ISBN, затем по названию."@ru ;
+    scilibreco:alignedWith <http://purl.org/ontology/bibo/Periodical> .
+
+scilibreco:Keyword a owl:Class ;
+    rdfs:label "Keyword"@en ;
+    rdfs:label "Ключевое слово"@ru ;
+    rdfs:comment "Ключевое слово как самостоятельный объект, общий для документов. Отличается от KeywordList (сегмент со списком слов в тексте) и от MathematicalConcept (понятие предметной области): ключевое слово — авторский или извлечённый термин без гарантии, что это математическое понятие."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#Concept> .
+
+scilibreco:SubjectArea a owl:Class ;
+    rdfs:label "Subject area"@en ;
+    rdfs:label "Предметная область"@ru ;
+    rdfs:comment "Элемент справочника предметных областей SciLibReco: широкая область (mathematics, physics) или категория таксономии arXiv (math.DS, hep-lat), загружаемой с arxiv.org. Опознаётся машинным кодом (hasCode). УДК — отдельный справочник, класс UDCClass."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#Concept> .
+
+scilibreco:UDCClass a owl:Class ;
+    rdfs:label "UDC class"@en ;
+    rdfs:label "Класс УДК"@ru ;
+    rdfs:comment "Класс Универсальной десятичной классификации. Экземпляры — записи справочника UDC Summary (UDC Consortium, CC BY-NC 4.0: индекс hasCode, название rdfs:label на русском и английском, версия hasCatalogVersion) и индексы, которые авторы поставили своим статьям (только hasCode; к ближайшему классу справочника — hasBroaderUDCClass). Классы УДК не выводятся моделью: только справочник и то, что напечатано в статье."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#Concept> .
+
+scilibreco:Year a owl:Class ;
+    rdfs:label "Year"@en ;
+    rdfs:label "Год"@ru ;
+    rdfs:comment "Год публикации как общая вершина обхода: через неё связываются документы одного года. Числовое значение года дублируется на документе свойством hasPublicationYear."@ru .
+
+scilibreco:Revision a owl:Class ;
+    rdfs:label "Revision"@en ;
+    rdfs:label "Ревизия"@ru ;
+    rdfs:comment "Неизменяемая ревизия извлечённых данных документа. Все ревизии публикуются в общий граф данных SciLibReco; свойства ревизии отвечают, каким кодом и из какого входа получены данные."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/ns/prov#Entity> .
+
+scilibreco:UserRequest a owl:Class ;
+    rdfs:label "User request"@en ;
+    rdfs:label "Пользовательский запрос"@ru ;
+    rdfs:comment "Запрос пользователя к системе рекомендаций — девятый тип объектов SciLibReco. Класс объявлен для полноты модели; экземпляры в граф не публикуются: текст запроса является закрытыми данными."@ru .
+
+scilibreco:ScientificConcept a owl:Class ;
+    rdfs:label "Scientific concept"@en ;
+    rdfs:label "Научное понятие"@ru ;
+    rdfs:comment "Понятие науки, которое документ вводит, изучает или существенно использует (глюбол, уравнение с запаздыванием, спинорное расслоение). Объектный слой науки: документы — данные, понятия — то, что система из них поняла. Опознаётся по нормализованному английскому наименованию, поэтому одно понятие — одна вершина на весь корпус; по общим понятиям связываются документы, по их соседству — области и лакуны."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#Concept> .
+
+moc:MathematicalConcept rdfs:subClassOf scilibreco:ScientificConcept ;
+    scilibreco:usageNote "Математическое понятие v2 — частный случай научного понятия SciLibReco: понятие из статьи по математике получает оба класса, понятие физики — только scilibreco:ScientificConcept."@ru .
+
+# Корневые категории не пересекаются. Аксиома превращает ошибку словаря в
+# обнаружимое противоречие: если система применит к документу свойство с
+# доменом DocumentSegment, вывод сделает документ сегментом, а публикация и
+# часть документа не пересекаются — рассуждатель сообщит о несогласованности.
+[] a owl:AllDisjointClasses ;
+    owl:members (
+        moc:Publication
+        moc:DocumentPart
+        scilibreco:Person
+        scilibreco:Organization
+        scilibreco:PublishingPlatform
+        scilibreco:Keyword
+        scilibreco:SubjectArea
+        scilibreco:Year
+        scilibreco:Revision
+        scilibreco:UserRequest
+        moc:FunctionalRole
+        scilibreco:ScientificConcept
+    ) .
+
+#################################################################
+# SciLibReco: object properties of a publication
+#################################################################
+
+scilibreco:hasAuthor a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:Author ;
+    owl:inverseOf scilibreco:authorOf ;
+    rdfs:label "has author"@en ;
+    rdfs:label "имеет автора"@ru ;
+    rdfs:comment "Автор публикации. Из двух таких связей одной публикации следует соавторство (coAuthorOf)."@ru ;
+    scilibreco:alignedWith dcterms:creator .
+
+scilibreco:authorOf a owl:ObjectProperty ;
+    rdfs:domain scilibreco:Author ;
+    rdfs:range moc:Publication ;
+    rdfs:label "author of"@en ;
+    rdfs:label "является автором"@ru .
+
+scilibreco:hasReviewer a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:Reviewer ;
+    owl:inverseOf scilibreco:reviewerOf ;
+    rdfs:label "has reviewer"@en ;
+    rdfs:label "имеет рецензента"@ru .
+
+scilibreco:reviewerOf a owl:ObjectProperty ;
+    rdfs:domain scilibreco:Reviewer ;
+    rdfs:range moc:Publication ;
+    rdfs:label "reviewer of"@en ;
+    rdfs:label "является рецензентом"@ru .
+
+scilibreco:publishedIn a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:PublishingPlatform ;
+    rdfs:label "published in"@en ;
+    rdfs:label "опубликовано в"@ru ;
+    scilibreco:alignedWith dcterms:isPartOf .
+
+scilibreco:publishedInYear a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:Year ;
+    rdfs:label "published in year"@en ;
+    rdfs:label "опубликовано в году"@ru .
+
+scilibreco:hasKeyword a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:Keyword ;
+    rdfs:label "has keyword"@en ;
+    rdfs:label "имеет ключевое слово"@ru ;
+    scilibreco:alignedWith dcterms:subject .
+
+scilibreco:hasSubjectArea a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:SubjectArea ;
+    rdfs:label "has subject area"@en ;
+    rdfs:label "относится к предметной области"@ru .
+
+scilibreco:containsFormula a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:hasSegment ;
+    rdfs:domain moc:Publication ;
+    rdfs:range moc:Formula ;
+    rdfs:label "contains formula"@en ;
+    rdfs:label "содержит формулу"@ru ;
+    rdfs:comment "Публикация содержит формулу. Подсвойство hasSegment с диапазоном Formula: по нему Reco находит документы с общей формулой."@ru .
+
+scilibreco:containsStatement a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:hasSegment ;
+    rdfs:domain moc:Publication ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "contains statement"@en ;
+    rdfs:label "содержит утверждение"@ru ;
+    rdfs:comment "Публикация содержит математическое утверждение (теорему, лемму, предложение, следствие). Подсвойство hasSegment."@ru .
+
+scilibreco:hasRevision a owl:ObjectProperty ;
+    rdfs:domain moc:Document ;
+    rdfs:range scilibreco:Revision ;
+    owl:inverseOf scilibreco:revisionOf ;
+    rdfs:label "has revision"@en ;
+    rdfs:label "имеет ревизию"@ru .
+
+scilibreco:revisionOf a owl:ObjectProperty ;
+    rdfs:domain scilibreco:Revision ;
+    rdfs:range moc:Document ;
+    rdfs:label "revision of"@en ;
+    rdfs:label "является ревизией"@ru .
+
+scilibreco:semanticallySimilarTo a owl:ObjectProperty, owl:SymmetricProperty, owl:IrreflexiveProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range moc:Publication ;
+    rdfs:label "semantically similar to"@en ;
+    rdfs:label "семантически близка к"@ru ;
+    rdfs:comment "Две публикации близки по смыслу частей: многие фрагменты одной близки к фрагментам другой (векторы частей документа, поправка на фон корпуса). Ребро ставится, только если близость выше порога; само значение близости (сходство, z-оценка, совпавшие фрагменты) хранится в Qdrant, в граф не пишется. Публикуется одно направление, обход — в обе стороны."@ru .
+
+#################################################################
+# SciLibReco: object properties of the science layer (concepts, areas)
+#################################################################
+
+scilibreco:hasConcept a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:ScientificConcept ;
+    rdfs:label "has concept"@en ;
+    rdfs:label "изучает понятие"@ru ;
+    rdfs:comment "Публикация вводит, изучает или существенно использует научное понятие. Своё свойство вместо moc:mentionsConcept: у него в v2 домен DocumentSegment."@ru .
+
+scilibreco:relatedConcept a owl:ObjectProperty, owl:SymmetricProperty, owl:IrreflexiveProperty ;
+    rdfs:domain scilibreco:ScientificConcept ;
+    rdfs:range scilibreco:ScientificConcept ;
+    rdfs:label "related concept"@en ;
+    rdfs:label "связанное понятие"@ru ;
+    rdfs:comment "Выводимая связь двух понятий: они значимо чаще встречаются в одних документах (NPMI) либо близки по смыслу (вектор наименования и определения). Публикуется построителем слоя науки; одно направление, обход — в обе стороны."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#related> .
+
+scilibreco:conceptInArea a owl:ObjectProperty ;
+    rdfs:domain scilibreco:ScientificConcept ;
+    rdfs:range scilibreco:SubjectArea ;
+    rdfs:label "concept in area"@en ;
+    rdfs:label "понятие области"@ru ;
+    rdfs:comment "Научное понятие относится к научной области (обычно — к узкой, например math.DS)."@ru .
+
+scilibreco:hasUDCClass a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range scilibreco:UDCClass ;
+    rdfs:label "has UDC class"@en ;
+    rdfs:label "имеет класс УДК"@ru ;
+    rdfs:comment "Класс УДК, который авторы поставили статье (строка «УДК …» в заголовке). Составной индекс статьи (hasUDC) даёт по связи на каждую часть: основной номер и общие определители."@ru .
+
+scilibreco:hasBroaderUDCClass a owl:ObjectProperty ;
+    rdfs:domain scilibreco:UDCClass ;
+    rdfs:range scilibreco:UDCClass ;
+    rdfs:label "has broader UDC class"@en ;
+    rdfs:label "входит в класс УДК"@ru ;
+    rdfs:comment "Иерархия УДК: класс входит в более общий (517.9 → 517 → 51 → 5). У индекса статьи, которого нет в справочнике, — ближайший класс справочника по укорочению индекса."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#broader> .
+
+scilibreco:hasBroaderArea a owl:ObjectProperty ;
+    rdfs:domain scilibreco:SubjectArea ;
+    rdfs:range scilibreco:SubjectArea ;
+    rdfs:label "has broader area"@en ;
+    rdfs:label "входит в область"@ru ;
+    rdfs:comment "Иерархия научных областей: узкая область (таксономия arXiv: math.CA, hep-lat, cs.SE) входит в широкую область справочника SciLibReco (mathematics, physics, computer_science)."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#broader> .
+
+#################################################################
+# SciLibReco: object properties of a person
+#################################################################
+
+scilibreco:hasAffiliation a owl:ObjectProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range scilibreco:Organization ;
+    rdfs:label "has affiliation"@en ;
+    rdfs:label "связан с организацией"@ru ;
+    rdfs:comment "Аффилиация человека. Многозначно: место работы меняется от статьи к статье, и каждая ревизия публикует ту организацию, что указана в документе."@ru ;
+    scilibreco:alignedWith <http://schema.org/affiliation> .
+
+scilibreco:samePersonAs a owl:ObjectProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range scilibreco:Person ;
+    rdfs:label "same person as"@en ;
+    rdfs:label "тот же человек, что"@ru ;
+    rdfs:comment "Связь двух вершин одного человека: участника системы с объектом Author или Reviewer, извлечённым из документов, либо двух объектов Author, которым страницы «Об авторах» приписали одно полное имя и один год рождения. Намеренно не owl:sameAs: вершины остаются разными, удаление учётной записи не разрушает научные связи автора. Условия подбора рецензента проверяются для всех вершин человека сразу."@ru .
+
+scilibreco:coAuthorOf a owl:ObjectProperty, owl:SymmetricProperty, owl:IrreflexiveProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range scilibreco:Person ;
+    rdfs:label "co-author of"@en ;
+    rdfs:label "соавтор"@ru ;
+    rdfs:comment "Выводимая связь: два разных человека являются авторами одной публикации. Материализуется правилом S1; первое условие подбора рецензента — отсутствие этой связи между автором и кандидатом."@ru .
+
+scilibreco:hasResearchInterest a owl:ObjectProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:label "has research interest"@en ;
+    rdfs:label "имеет научный интерес"@ru ;
+    rdfs:comment "Научный интерес человека: ключевое слово, предметная область или математическое понятие. Материализуется правилом S2 по публикациям автора либо задаётся человеком явно. Диапазон не задан: значением служат объекты трёх разных классов."@ru .
+
+scilibreco:hasConflictOfInterestWith a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range scilibreco:Person ;
+    rdfs:label "has conflict of interest with"@en ;
+    rdfs:label "имеет конфликт интересов с"@ru ;
+    rdfs:comment "Выводимая связь: соавторство либо общая организация. Материализуется правилами S4 и S5; рецензент не должен иметь её ни с одним автором работы."@ru .
+
+#################################################################
+# SciLibReco: datatype properties shared by several classes
+#################################################################
+
+scilibreco:hasLanguage a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has language"@en ;
+    rdfs:label "имеет язык"@ru ;
+    rdfs:comment "Код языка ISO 639-1 (ru, en) у документа, ключевого слова, площадки публикации, человека. Своё свойство вместо moc:hasLanguage: у него в v2 домен DocumentSegment, и при выводе любой объект с языком становился бы сегментом документа."@ru .
+
+scilibreco:hasName a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has name"@en ;
+    rdfs:label "имеет наименование"@ru ;
+    rdfs:comment "Отображаемое наименование объекта: имя человека, название организации, площадки публикации, ключевое слово, название предметной области, формулы или утверждения. Для публикации используется hasTitle."@ru ;
+    scilibreco:alignedWith <http://xmlns.com/foaf/0.1/name> .
+
+scilibreco:hasNormalizedName a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has normalized name"@en ;
+    rdfs:label "имеет нормализованное наименование"@ru ;
+    rdfs:comment "Наименование, приведённое к сравнимому виду (регистр, пробелы, порядок инициалов); служит ключом сопоставления человека, организации и ключевого слова."@ru .
+
+scilibreco:hasTitle a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has title"@en ;
+    rdfs:label "имеет заглавие"@ru ;
+    rdfs:comment "Заглавие публикации или сегмента. В исходной Mocassin — свойство «has title»; в MocassinPlus v2 его не было, только класс Title."@ru ;
+    scilibreco:alignedWith dcterms:title .
+
+scilibreco:hasDescription a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has description"@en ;
+    rdfs:label "имеет описание"@ru ;
+    scilibreco:alignedWith dcterms:description .
+
+scilibreco:hasCode a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has code"@en ;
+    rdfs:label "имеет код"@ru ;
+    rdfs:comment "Машинный код элемента управляемого справочника: у предметной области — код области SciLibReco (mathematics) или arXiv (math.DS), у класса УДК — его индекс (517.9, =161.1, (075.8))."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#notation> .
+
+scilibreco:hasCatalogVersion a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has catalog version"@en ;
+    rdfs:label "имеет версию справочника"@ru .
+
+scilibreco:hasSchemaVersion a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has schema version"@en ;
+    rdfs:label "имеет версию схемы публикации"@ru .
+
+scilibreco:hasSourceChecksum a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has source checksum"@en ;
+    rdfs:label "имеет контрольную сумму источника"@ru ;
+    rdfs:comment "SHA-256 исходного файла; у документа — сигнал тождества, у ревизии — указание на вход, из которого она получена."@ru .
+
+#################################################################
+# SciLibReco: datatype properties of a publication
+#################################################################
+
+scilibreco:hasAbstract a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:string ;
+    rdfs:label "has abstract"@en ;
+    rdfs:label "имеет аннотацию"@ru ;
+    rdfs:comment "Текст аннотации публикации. Аннотация как сегмент документа описывается классом Abstract."@ru ;
+    scilibreco:alignedWith dcterms:abstract .
+
+scilibreco:hasTopic a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:string ;
+    rdfs:label "has topic"@en ;
+    rdfs:label "имеет тему"@ru ;
+    rdfs:comment "Короткая тема публикации, собранная правилами из заглавия и ключевых слов."@ru .
+
+scilibreco:hasDocumentType a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:string ;
+    rdfs:label "has document type"@en ;
+    rdfs:label "имеет вид документа"@ru ;
+    rdfs:comment "Машинный код вида материала: article, issue, book."@ru .
+
+scilibreco:hasPublicationYear a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has publication year"@en ;
+    rdfs:label "имеет год публикации"@ru .
+
+scilibreco:hasUDC a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "has UDC code"@en ;
+    rdfs:label "имеет код УДК"@ru ;
+    rdfs:comment "Индекс УДК статьи, как напечатан (составной, с определителями: 517.95:519.6(075.8)); части индекса — связи hasUDCClass."@ru .
+
+scilibreco:hasVolume a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:string ;
+    rdfs:label "has volume"@en ;
+    rdfs:label "имеет том"@ru ;
+    rdfs:comment "Том издания, в котором вышла публикация. Свойство публикации, а не площадки: площадка общая для всех своих выпусков."@ru ;
+    scilibreco:alignedWith <http://purl.org/ontology/bibo/volume> .
+
+scilibreco:hasIssue a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:string ;
+    rdfs:label "has issue"@en ;
+    rdfs:label "имеет выпуск"@ru ;
+    scilibreco:alignedWith <http://purl.org/ontology/bibo/issue> .
+
+scilibreco:hasSourceFormat a owl:DatatypeProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:string ;
+    rdfs:label "has source format"@en ;
+    rdfs:label "имеет формат источника"@ru ;
+    rdfs:comment "Формат исходного файла: pdf, tex, docx, xml."@ru .
+
+scilibreco:hasSubjectAreaConfidence a owl:DatatypeProperty ;
+    rdfs:subPropertyOf moc:hasConfidence ;
+    rdfs:domain moc:Publication ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has subject area confidence"@en ;
+    rdfs:label "имеет уверенность выбора предметной области"@ru ;
+    rdfs:comment "Уверенность выбора предметной области этой публикации. Лежит на публикации, а не на области: вершина области общая для всего корпуса."@ru .
+
+scilibreco:wasPublishedAt a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "was published at"@en ;
+    rdfs:label "опубликовано в граф в момент"@ru .
+
+scilibreco:hasExtractionQuality a owl:DatatypeProperty ;
+    rdfs:subPropertyOf moc:hasConfidence ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has extraction quality"@en ;
+    rdfs:label "имеет качество извлечения"@ru ;
+    rdfs:comment "Качество извлечения объекта, 0..1: у документа — оценка качества действующей ревизии, у объекта из документа — оценка документа, умноженная на уверенность связи документа с объектом. Многозначно: объект, общий для нескольких документов, получает значение от каждого; действует наибольшее. Правило ядра рекомендаций: объект с качеством ниже 0,5 приравнивается к случайному и в рекомендациях не участвует. Домен не задан: свойство есть у объектов любых классов."@ru .
+
+scilibreco:hasDefinitionText a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:ScientificConcept ;
+    rdfs:range xsd:string ;
+    rdfs:label "has definition text"@en ;
+    rdfs:label "имеет определение"@ru ;
+    rdfs:comment "Короткое определение научного понятия (одно-два предложения) — из языковой модели по тексту документа."@ru ;
+    scilibreco:alignedWith <http://www.w3.org/2004/02/skos/core#definition> .
+
+#################################################################
+# SciLibReco: datatype properties of a person and an organization
+#################################################################
+
+scilibreco:hasEmail a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has e-mail"@en ;
+    rdfs:label "имеет адрес почты"@ru ;
+    rdfs:comment "Адрес электронной почты автора — сильнейший сигнал тождества человека. Адреса участников системы не публикуются."@ru ;
+    scilibreco:alignedWith <http://xmlns.com/foaf/0.1/mbox> .
+
+scilibreco:hasORCID a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has ORCID"@en ;
+    rdfs:label "имеет ORCID"@ru .
+
+scilibreco:hasAcademicDegree a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has academic degree"@en ;
+    rdfs:label "имеет учёную степень или звание"@ru ;
+    rdfs:comment "Степень или звание, как оно стоит в подписи автора: «д-р», «канд», «проф»."@ru .
+
+scilibreco:hasBirthYear a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has birth year"@en ;
+    rdfs:label "имеет год рождения"@ru ;
+    rdfs:comment "Год рождения человека. В статьях его нет: он берётся со страниц «Об авторах» выпусков журналов либо задаётся в профиле участника системы. Четвёртое условие подбора рецензента проверяет возраст по этому свойству, а при его отсутствии — по годам публикаций."@ru .
+
+scilibreco:hasDeathYear a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has death year"@en ;
+    rdfs:label "имеет год смерти"@ru ;
+    rdfs:comment "Год смерти человека, если страница «Об авторах» печатает годы жизни. Такой автор остаётся в графе со всеми работами, но в рецензенты не предлагается."@ru .
+
+scilibreco:hasFullName a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has full name"@en ;
+    rdfs:label "имеет полное имя"@ru ;
+    rdfs:comment "Полное имя человека — фамилия, имя и отчество — со страницы «Об авторах». Отдельное от hasName свойство: в статьях автор подписан фамилией с инициалами, и именно эта подпись служит его отображаемым именем."@ru .
+
+scilibreco:hasFirstPublicationYear a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has first publication year"@en ;
+    rdfs:label "имеет год первой публикации"@ru ;
+    rdfs:comment "Выводимое свойство (правило S3): наименьший год публикации среди работ автора в корпусе."@ru .
+
+scilibreco:hasLastPublicationYear a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has last publication year"@en ;
+    rdfs:label "имеет год последней публикации"@ru ;
+    rdfs:comment "Выводимое свойство (правило S3): наибольший год публикации среди работ автора в корпусе; показывает, действует ли исследователь сейчас."@ru .
+
+scilibreco:hasIdentitySignal a owl:DatatypeProperty ;
+    rdfs:subPropertyOf moc:hasExtractionMethod ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has identity signal"@en ;
+    rdfs:label "имеет сигнал тождества"@ru ;
+    rdfs:comment "Каким сигналом человек сопоставлен с документом: email или name."@ru .
+
+scilibreco:hasIdentityConfidence a owl:DatatypeProperty ;
+    rdfs:subPropertyOf moc:hasConfidence ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has identity confidence"@en ;
+    rdfs:label "имеет уверенность тождества"@ru .
+
+scilibreco:hasAccountName a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has account name"@en ;
+    rdfs:label "имеет имя учётной записи"@ru .
+
+scilibreco:hasSystemRole a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "has system role"@en ;
+    rdfs:label "имеет роль в системе"@ru ;
+    rdfs:comment "Машинный код роли участника системы: admin, operator, author, reviewer, reader. Название намеренно не hasRole и не hasFunctionalRole: функциональная роль — свойство сегмента документа."@ru .
+
+scilibreco:isActive a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Person ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is active"@en ;
+    rdfs:label "учётная запись действует"@ru .
+
+scilibreco:hasEmailDomain a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Organization ;
+    rdfs:range xsd:string ;
+    rdfs:label "has e-mail domain"@en ;
+    rdfs:label "имеет почтовый домен"@ru ;
+    rdfs:comment "Домен служебной почты организации. Организация, опознанная только по домену, получает его же наименованием."@ru .
+
+#################################################################
+# SciLibReco: datatype properties of a publishing platform and a keyword
+#################################################################
+
+scilibreco:hasPlatformType a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:PublishingPlatform ;
+    rdfs:range xsd:string ;
+    rdfs:label "has platform type"@en ;
+    rdfs:label "имеет вид площадки"@ru ;
+    rdfs:comment "Машинный код вида площадки из закрытого списка SciLibReco: journal, conference, proceedings, book, encyclopedia, reference, collection, preprint, repository, other."@ru .
+
+scilibreco:hasISSN a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:PublishingPlatform ;
+    rdfs:range xsd:string ;
+    rdfs:label "has ISSN"@en ;
+    rdfs:label "имеет ISSN"@ru ;
+    scilibreco:alignedWith <http://purl.org/ontology/bibo/issn> .
+
+scilibreco:hasISBN a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:PublishingPlatform ;
+    rdfs:range xsd:string ;
+    rdfs:label "has ISBN"@en ;
+    rdfs:label "имеет ISBN"@ru ;
+    scilibreco:alignedWith <http://purl.org/ontology/bibo/isbn> .
+
+scilibreco:hasPublisher a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:PublishingPlatform ;
+    rdfs:range xsd:string ;
+    rdfs:label "has publisher"@en ;
+    rdfs:label "имеет издателя"@ru .
+
+scilibreco:hasOrigin a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Keyword ;
+    rdfs:range xsd:string ;
+    rdfs:label "has origin"@en ;
+    rdfs:label "имеет происхождение"@ru ;
+    rdfs:comment "Откуда взято ключевое слово: author — из авторского списка, rule — выделено правилом."@ru .
+
+scilibreco:hasYearValue a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Year ;
+    rdfs:range xsd:integer ;
+    rdfs:label "has year value"@en ;
+    rdfs:label "имеет значение года"@ru .
+
+#################################################################
+# SciLibReco: datatype properties of a formula and a statement
+#################################################################
+
+scilibreco:hasSourceForm a owl:DatatypeProperty ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:string ;
+    rdfs:label "has source form"@en ;
+    rdfs:label "имеет основную запись"@ru ;
+    rdfs:comment "Основная запись формулы в том виде, в каком она встречена первой. Публикуется ровно одна на формулу в ревизии; все записи перечисляет hasVariantForm."@ru .
+
+scilibreco:hasNotationFormat a owl:DatatypeProperty ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:string ;
+    rdfs:label "has notation format"@en ;
+    rdfs:label "имеет формат основной записи"@ru ;
+    rdfs:comment "Код формата основной записи: latex, mathml, ascii, unicode, lean, other. Название намеренно не hasNotation: это объектное свойство «понятие — обозначение»."@ru .
+
+scilibreco:hasVariantForm a owl:DatatypeProperty ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:string ;
+    rdfs:label "has variant form"@en ;
+    rdfs:label "имеет представление"@ru ;
+    rdfs:comment "Любая запись формулы, включая основную: одна формула, встреченная в LaTeX, Unicode и ASCII, остаётся одним объектом с несколькими представлениями. Записи LaTeX, MathML и текстовые дублируются свойствами hasLatexSource, hasMathML и hasPlainText."@ru .
+
+scilibreco:hasVariantNotationFormat a owl:DatatypeProperty ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:string ;
+    rdfs:label "has variant notation format"@en ;
+    rdfs:label "имеет формат представления"@ru ;
+    rdfs:comment "Код формата, в котором формула встречалась; по одному значению на формат."@ru .
+
+scilibreco:hasNamingMethod a owl:DatatypeProperty ;
+    rdfs:subPropertyOf moc:hasExtractionMethod ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:string ;
+    rdfs:label "has naming method"@en ;
+    rdfs:label "имеет способ именования"@ru ;
+    rdfs:comment "Как формула получила название: rule — правилом, llm — языковой моделью."@ru .
+
+scilibreco:hasNamingConfidence a owl:DatatypeProperty ;
+    rdfs:subPropertyOf moc:hasConfidence ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has naming confidence"@en ;
+    rdfs:label "имеет уверенность названия"@ru .
+
+scilibreco:isDisplayFormula a owl:DatatypeProperty ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is display formula"@en ;
+    rdfs:label "выключная формула"@ru ;
+    rdfs:comment "Истина для выключной формулы, ложь для формулы в строке текста."@ru .
+
+scilibreco:hasLocator a owl:DatatypeProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range xsd:string ;
+    rdfs:label "has locator"@en ;
+    rdfs:label "имеет локатор"@ru ;
+    rdfs:comment "Короткая подпись места сегмента в источнике: страница, строка, окружение («p.3 l.120 equation»). Для сегмента с тождеством значение относится к документу той ревизии, в чьём графе оно записано, поэтому числовые hasPageNumber и hasLineNumber на общей вершине не публикуются."@ru .
+
+scilibreco:isProofPresent a owl:DatatypeProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is proof present"@en ;
+    rdfs:label "доказательство присутствует"@ru ;
+    rdfs:comment "Найдено ли в документе доказательство утверждения. Явная отметка, на которую ссылалось сообщение TheoremShape версии 2, но которой в онтологии не было; сам текст доказательства связывается свойством provedBy."@ru .
+
+#################################################################
+# SciLibReco: datatype properties of a revision
+#################################################################
+
+scilibreco:hasBuilderVersion a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Revision ;
+    rdfs:range xsd:string ;
+    rdfs:label "has builder version"@en ;
+    rdfs:label "имеет версию построителя RDF"@ru .
+
+scilibreco:hasPipelineVersion a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Revision ;
+    rdfs:range xsd:string ;
+    rdfs:label "has pipeline version"@en ;
+    rdfs:label "имеет версию конвейера"@ru .
+
+scilibreco:hasQualityScore a owl:DatatypeProperty ;
+    rdfs:domain scilibreco:Revision ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has quality score"@en ;
+    rdfs:label "имеет оценку качества"@ru ;
+    rdfs:comment "Оценка качества извлечения ревизии от 0 до 1."@ru .

@@ -1,0 +1,597 @@
+@prefix moc: <https://w3id.org/mocassinplus/ontology#> .
+@prefix mp: <https://w3id.org/mocassinplus/resource/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://w3id.org/mocassinplus/ontology>
+    a owl:Ontology ;
+    rdfs:label "MocassinPlus — обновленная версия v2"@ru ;
+    rdfs:label "MocassinPlus — updated version v2"@en ;
+    dcterms:title "MocassinPlus — обновленная версия v2"@ru ;
+    dcterms:description "Практическая OWL-онтология для аннотирования логической, текстовой и источниковой структуры математических документов."@ru ;
+    dcterms:description "A practical OWL ontology for annotating the logical, textual and source-aware structure of mathematical documents."@en ;
+    owl:versionInfo "2.0" .
+
+#################################################################
+# Annotation properties
+#################################################################
+
+moc:mapsToClass a owl:AnnotationProperty ;
+    rdfs:label "maps to class"@en ;
+    rdfs:label "отображается в класс"@ru ;
+    rdfs:comment "Используется для связывания экземпляра FunctionalRole с целевым OWL-классом, например TheoremRole -> moc:Theorem."@ru .
+
+#################################################################
+# Core document classes
+#################################################################
+
+moc:Publication a owl:Class ;
+    rdfs:label "Publication"@en ;
+    rdfs:label "Публикация"@ru ;
+    rdfs:comment "Библиографическая публикация или научная работа как целое."@ru .
+
+moc:Document a owl:Class ;
+    rdfs:subClassOf moc:Publication ;
+    rdfs:label "Document"@en ;
+    rdfs:label "Документ"@ru .
+
+moc:DocumentPart a owl:Class ;
+    rdfs:label "Document part"@en ;
+    rdfs:label "Часть документа"@ru .
+
+moc:DocumentSegment a owl:Class ;
+    rdfs:subClassOf moc:DocumentPart ;
+    rdfs:label "Document segment"@en ;
+    rdfs:label "Сегмент документа"@ru ;
+    rdfs:comment "Смысловой фрагмент документа: раздел, абзац, предложение, теорема, доказательство, формула и т.д."@ru .
+
+moc:FrontMatter a owl:Class ; rdfs:subClassOf moc:DocumentPart ; rdfs:label "Front matter"@en ; rdfs:label "Начальная часть документа"@ru .
+moc:Body a owl:Class ; rdfs:subClassOf moc:DocumentPart ; rdfs:label "Body"@en ; rdfs:label "Основная часть"@ru .
+moc:BackMatter a owl:Class ; rdfs:subClassOf moc:DocumentPart ; rdfs:label "Back matter"@en ; rdfs:label "Заключительная часть документа"@ru .
+
+moc:Title a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Title"@en ; rdfs:label "Заголовок"@ru .
+moc:Abstract a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Abstract"@en ; rdfs:label "Аннотация"@ru .
+moc:KeywordList a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Keyword list"@en ; rdfs:label "Список ключевых слов"@ru .
+moc:Introduction a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Introduction"@en ; rdfs:label "Введение"@ru .
+moc:RelatedWork a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Related work"@en ; rdfs:label "Обзор работ"@ru .
+moc:Preliminaries a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Preliminaries"@en ; rdfs:label "Предварительные сведения"@ru .
+moc:MethodSection a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Method section"@en ; rdfs:label "Раздел методов"@ru .
+moc:ResultsSection a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Results section"@en ; rdfs:label "Раздел результатов"@ru .
+moc:ConclusionSection a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Conclusion section"@en ; rdfs:label "Заключение"@ru .
+moc:Appendix a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Appendix"@en ; rdfs:label "Приложение"@ru .
+moc:Bibliography a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Bibliography"@en ; rdfs:label "Библиография"@ru .
+moc:ReferenceEntry a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Reference entry"@en ; rdfs:label "Библиографическая запись"@ru .
+moc:Citation a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Citation"@en ; rdfs:label "Библиографическая ссылка в тексте"@ru .
+
+moc:Section a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Section"@en ; rdfs:label "Раздел"@ru .
+moc:Subsection a owl:Class ; rdfs:subClassOf moc:Section ; rdfs:label "Subsection"@en ; rdfs:label "Подраздел"@ru .
+moc:Paragraph a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Paragraph"@en ; rdfs:label "Абзац"@ru .
+moc:Sentence a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Sentence"@en ; rdfs:label "Предложение"@ru .
+moc:Caption a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Caption"@en ; rdfs:label "Подпись"@ru .
+moc:Footnote a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Footnote"@en ; rdfs:label "Сноска"@ru .
+moc:Figure a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Figure"@en ; rdfs:label "Рисунок"@ru .
+moc:Table a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Table"@en ; rdfs:label "Таблица"@ru .
+
+#################################################################
+# Mathematical statement classes
+#################################################################
+
+moc:MathematicalStatement a owl:Class ;
+    rdfs:subClassOf moc:DocumentSegment ;
+    rdfs:label "Mathematical statement"@en ;
+    rdfs:label "Математическое утверждение"@ru .
+
+moc:Statement a owl:Class ;
+    owl:equivalentClass moc:MathematicalStatement ;
+    rdfs:label "Statement"@en ;
+    rdfs:label "Утверждение"@ru .
+
+moc:AssertedStatement a owl:Class ;
+    rdfs:subClassOf moc:MathematicalStatement ;
+    rdfs:label "Asserted statement"@en ;
+    rdfs:label "Заявленное утверждение"@ru .
+
+moc:ProvedStatement a owl:Class ;
+    rdfs:subClassOf moc:AssertedStatement ;
+    rdfs:label "Proved statement"@en ;
+    rdfs:label "Доказуемое утверждение"@ru .
+
+moc:UnprovedStatement a owl:Class ;
+    rdfs:subClassOf moc:MathematicalStatement ;
+    rdfs:label "Unproved statement"@en ;
+    rdfs:label "Недоказанное утверждение"@ru .
+
+moc:DefinitionalStatement a owl:Class ;
+    rdfs:subClassOf moc:MathematicalStatement ;
+    rdfs:label "Definitional statement"@en ;
+    rdfs:label "Определительное утверждение"@ru .
+
+moc:Claim a owl:Class ; rdfs:subClassOf moc:ProvedStatement ; rdfs:label "Claim"@en ; rdfs:label "Утверждение"@ru .
+moc:Theorem a owl:Class ; rdfs:subClassOf moc:ProvedStatement ; rdfs:label "Theorem"@en ; rdfs:label "Теорема"@ru .
+moc:Lemma a owl:Class ; rdfs:subClassOf moc:ProvedStatement ; rdfs:label "Lemma"@en ; rdfs:label "Лемма"@ru .
+moc:Proposition a owl:Class ; rdfs:subClassOf moc:ProvedStatement ; rdfs:label "Proposition"@en ; rdfs:label "Предложение"@ru .
+moc:Corollary a owl:Class ; rdfs:subClassOf moc:ProvedStatement ; rdfs:label "Corollary"@en ; rdfs:label "Следствие"@ru .
+moc:Fact a owl:Class ; rdfs:subClassOf moc:ProvedStatement ; rdfs:label "Fact"@en ; rdfs:label "Факт"@ru .
+moc:Axiom a owl:Class ; rdfs:subClassOf moc:AssertedStatement ; rdfs:label "Axiom"@en ; rdfs:label "Аксиома"@ru .
+moc:Definition a owl:Class ; rdfs:subClassOf moc:DefinitionalStatement ; rdfs:label "Definition"@en ; rdfs:label "Определение"@ru .
+moc:NotationDefinition a owl:Class ; rdfs:subClassOf moc:Definition ; rdfs:label "Notation definition"@en ; rdfs:label "Определение обозначения"@ru .
+moc:Conjecture a owl:Class ; rdfs:subClassOf moc:UnprovedStatement ; rdfs:label "Conjecture"@en ; rdfs:label "Гипотеза"@ru .
+moc:Hypothesis a owl:Class ; rdfs:subClassOf moc:UnprovedStatement ; rdfs:label "Hypothesis"@en ; rdfs:label "Предположение"@ru .
+moc:OpenProblem a owl:Class ; rdfs:subClassOf moc:UnprovedStatement ; rdfs:label "Open problem"@en ; rdfs:label "Открытая проблема"@ru .
+moc:Remark a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Remark"@en ; rdfs:label "Замечание"@ru .
+moc:Example a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Example"@en ; rdfs:label "Пример"@ru .
+
+moc:Assumption a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Assumption"@en ; rdfs:label "Предпосылка"@ru .
+moc:Condition a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Condition"@en ; rdfs:label "Условие"@ru .
+moc:StatementConclusion a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Conclusion of statement"@en ; rdfs:label "Заключение утверждения"@ru .
+
+#################################################################
+# Proof structure
+#################################################################
+
+moc:Proof a owl:Class ;
+    rdfs:subClassOf moc:DocumentSegment ;
+    rdfs:label "Proof"@en ;
+    rdfs:label "Доказательство"@ru .
+
+moc:ProofStep a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Proof step"@en ; rdfs:label "Шаг доказательства"@ru .
+moc:Subproof a owl:Class ; rdfs:subClassOf moc:Proof ; rdfs:label "Subproof"@en ; rdfs:label "Поддоказательство"@ru .
+moc:Case a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Case"@en ; rdfs:label "Случай"@ru .
+moc:BaseCase a owl:Class ; rdfs:subClassOf moc:Case ; rdfs:label "Base case"@en ; rdfs:label "База индукции"@ru .
+moc:InductionStep a owl:Class ; rdfs:subClassOf moc:ProofStep ; rdfs:label "Induction step"@en ; rdfs:label "Шаг индукции"@ru .
+moc:ContradictionAssumption a owl:Class ; rdfs:subClassOf moc:Assumption ; rdfs:label "Contradiction assumption"@en ; rdfs:label "Предположение от противного"@ru .
+moc:Derivation a owl:Class ; rdfs:subClassOf moc:ProofStep ; rdfs:label "Derivation"@en ; rdfs:label "Вывод"@ru .
+moc:Justification a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "Justification"@en ; rdfs:label "Обоснование"@ru .
+moc:QEDMarker a owl:Class ; rdfs:subClassOf moc:DocumentSegment ; rdfs:label "QED marker"@en ; rdfs:label "Маркер окончания доказательства"@ru .
+
+#################################################################
+# Formula and expression classes
+#################################################################
+
+moc:MathematicalExpression a owl:Class ;
+    rdfs:subClassOf moc:DocumentSegment ;
+    rdfs:label "Mathematical expression"@en ;
+    rdfs:label "Математическое выражение"@ru .
+
+moc:Formula a owl:Class ; rdfs:subClassOf moc:MathematicalExpression ; rdfs:label "Formula"@en ; rdfs:label "Формула"@ru .
+moc:Equation a owl:Class ; rdfs:subClassOf moc:Formula ; rdfs:label "Equation"@en ; rdfs:label "Уравнение"@ru .
+moc:Variable a owl:Class ; rdfs:subClassOf moc:MathematicalExpression ; rdfs:label "Variable"@en ; rdfs:label "Переменная"@ru .
+moc:Symbol a owl:Class ; rdfs:subClassOf moc:MathematicalExpression ; rdfs:label "Symbol"@en ; rdfs:label "Символ"@ru .
+moc:Notation a owl:Class ; rdfs:subClassOf moc:MathematicalExpression ; rdfs:label "Notation"@en ; rdfs:label "Обозначение"@ru .
+
+#################################################################
+# Source, extraction and external linking
+#################################################################
+
+moc:SourceDocument a owl:Class ; rdfs:label "Source document"@en ; rdfs:label "Исходный документ"@ru .
+moc:SourceFile a owl:Class ; rdfs:label "Source file"@en ; rdfs:label "Исходный файл"@ru .
+moc:SourcePage a owl:Class ; rdfs:label "Source page"@en ; rdfs:label "Страница источника"@ru .
+moc:SourceSpan a owl:Class ; rdfs:label "Source span"@en ; rdfs:label "Фрагмент источника"@ru .
+moc:ExtractionRun a owl:Class ; rdfs:label "Extraction run"@en ; rdfs:label "Запуск извлечения"@ru .
+moc:ExtractionTool a owl:Class ; rdfs:label "Extraction tool"@en ; rdfs:label "Инструмент извлечения"@ru .
+moc:FunctionalRole a owl:Class ; rdfs:label "Functional role"@en ; rdfs:label "Функциональная роль"@ru .
+moc:MathematicalConcept a owl:Class ; rdfs:label "Mathematical concept"@en ; rdfs:label "Математическое понятие"@ru .
+moc:ExternalResource a owl:Class ; rdfs:label "External resource"@en ; rdfs:label "Внешний ресурс"@ru .
+moc:Formalization a owl:Class ; rdfs:label "Formalization"@en ; rdfs:label "Формализация"@ru .
+
+#################################################################
+# Object properties: containment, order, references
+#################################################################
+
+moc:hasSegment a owl:ObjectProperty ;
+    rdfs:domain moc:Publication ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "has segment"@en ;
+    rdfs:label "содержит сегмент"@ru .
+
+moc:segmentOf a owl:ObjectProperty ;
+    owl:inverseOf moc:hasSegment ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:Publication ;
+    rdfs:label "segment of"@en ;
+    rdfs:label "является сегментом"@ru .
+
+moc:hasPart a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:label "has part"@en ;
+    rdfs:label "имеет часть"@ru .
+
+moc:isPartOf a owl:ObjectProperty, owl:TransitiveProperty ;
+    owl:inverseOf moc:hasPart ;
+    rdfs:label "is part of"@en ;
+    rdfs:label "является частью"@ru .
+
+moc:followedBy a owl:ObjectProperty ;
+    owl:inverseOf moc:follows ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "followed by"@en ;
+    rdfs:label "после него идет"@ru .
+
+moc:follows a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "follows"@en ;
+    rdfs:label "идет после"@ru .
+
+moc:nextSegment a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:followedBy ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "next segment"@en ;
+    rdfs:label "следующий сегмент"@ru .
+
+moc:previousSegment a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:follows ;
+    owl:inverseOf moc:nextSegment ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "previous segment"@en ;
+    rdfs:label "предыдущий сегмент"@ru .
+
+moc:refersTo a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "refers to"@en ;
+    rdfs:label "ссылается на"@ru .
+
+moc:refersToStatement a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersTo ; rdfs:range moc:MathematicalStatement ; rdfs:label "refers to statement"@en ; rdfs:label "ссылается на утверждение"@ru .
+moc:refersToFormula a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersTo ; rdfs:range moc:Formula ; rdfs:label "refers to formula"@en ; rdfs:label "ссылается на формулу"@ru .
+moc:refersToDefinition a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersToStatement ; rdfs:range moc:Definition ; rdfs:label "refers to definition"@en ; rdfs:label "ссылается на определение"@ru .
+moc:refersToTheorem a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersToStatement ; rdfs:range moc:Theorem ; rdfs:label "refers to theorem"@en ; rdfs:label "ссылается на теорему"@ru .
+moc:refersToFigure a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersTo ; rdfs:range moc:Figure ; rdfs:label "refers to figure"@en ; rdfs:label "ссылается на рисунок"@ru .
+moc:refersToTable a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersTo ; rdfs:range moc:Table ; rdfs:label "refers to table"@en ; rdfs:label "ссылается на таблицу"@ru .
+moc:refersToSection a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersTo ; rdfs:range moc:Section ; rdfs:label "refers to section"@en ; rdfs:label "ссылается на раздел"@ru .
+moc:citesBibliographicReference a owl:ObjectProperty ; rdfs:subPropertyOf moc:refersTo ; rdfs:range moc:ReferenceEntry ; rdfs:label "cites bibliographic reference"@en ; rdfs:label "цитирует библиографическую запись"@ru .
+
+#################################################################
+# Object properties: mathematical and proof relations
+#################################################################
+
+moc:dependsOn a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "depends on"@en ;
+    rdfs:label "зависит от"@ru .
+
+moc:proves a owl:ObjectProperty ;
+    rdfs:domain moc:Proof ;
+    rdfs:range moc:ProvedStatement ;
+    owl:inverseOf moc:provedBy ;
+    rdfs:label "proves"@en ;
+    rdfs:label "доказывает"@ru .
+
+moc:provedBy a owl:ObjectProperty ;
+    rdfs:domain moc:ProvedStatement ;
+    rdfs:range moc:Proof ;
+    rdfs:label "proved by"@en ;
+    rdfs:label "доказано с помощью"@ru .
+
+moc:exemplifies a owl:ObjectProperty ;
+    rdfs:domain moc:Example ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "exemplifies"@en ;
+    rdfs:label "иллюстрирует"@ru .
+
+moc:hasConsequence a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "has consequence"@en ;
+    rdfs:label "имеет следствие"@ru .
+
+moc:mentions a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:label "mentions"@en ;
+    rdfs:label "упоминает"@ru .
+
+moc:mentionsConcept a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:mentions ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:MathematicalConcept ;
+    rdfs:label "mentions concept"@en ;
+    rdfs:label "упоминает понятие"@ru .
+
+moc:defines a owl:ObjectProperty ;
+    rdfs:domain moc:Definition ;
+    rdfs:range moc:MathematicalConcept ;
+    rdfs:label "defines"@en ;
+    rdfs:label "определяет"@ru .
+
+moc:introduces a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:MathematicalConcept ;
+    rdfs:label "introduces"@en ;
+    rdfs:label "вводит"@ru .
+
+moc:usesDefinition a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:dependsOn ;
+    rdfs:range moc:Definition ;
+    rdfs:label "uses definition"@en ;
+    rdfs:label "использует определение"@ru .
+
+moc:usesTheorem a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:dependsOn ;
+    rdfs:range moc:Theorem ;
+    rdfs:label "uses theorem"@en ;
+    rdfs:label "использует теорему"@ru .
+
+moc:usesLemma a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:dependsOn ;
+    rdfs:range moc:Lemma ;
+    rdfs:label "uses lemma"@en ;
+    rdfs:label "использует лемму"@ru .
+
+moc:usesResult a owl:ObjectProperty ;
+    rdfs:subPropertyOf moc:dependsOn ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "uses result"@en ;
+    rdfs:label "использует результат"@ru .
+
+moc:generalizes a owl:ObjectProperty ;
+    owl:inverseOf moc:specializes ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "generalizes"@en ;
+    rdfs:label "обобщает"@ru .
+
+moc:specializes a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "specializes"@en ;
+    rdfs:label "является частным случаем"@ru .
+
+moc:contradicts a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "contradicts"@en ;
+    rdfs:label "противоречит"@ru .
+
+moc:equivalentToStatement a owl:ObjectProperty, owl:SymmetricProperty, owl:TransitiveProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "equivalent to statement"@en ;
+    rdfs:label "эквивалентно утверждению"@ru .
+
+moc:reformulates a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "reformulates"@en ;
+    rdfs:label "переформулирует"@ru .
+
+moc:motivates a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "motivates"@en ;
+    rdfs:label "мотивирует"@ru .
+
+moc:continues a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "continues"@en ;
+    rdfs:label "продолжает"@ru .
+
+moc:summarizes a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "summarizes"@en ;
+    rdfs:label "резюмирует"@ru .
+
+moc:states a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:MathematicalStatement ;
+    rdfs:label "states"@en ;
+    rdfs:label "формулирует"@ru .
+
+moc:hasAssumption a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:Assumption ;
+    rdfs:label "has assumption"@en ;
+    rdfs:label "имеет предпосылку"@ru .
+
+moc:hasCondition a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:Condition ;
+    rdfs:label "has condition"@en ;
+    rdfs:label "имеет условие"@ru .
+
+moc:hasConclusion a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalStatement ;
+    rdfs:range moc:StatementConclusion ;
+    rdfs:label "has conclusion"@en ;
+    rdfs:label "имеет заключение"@ru .
+
+#################################################################
+# Object properties: proof structure
+#################################################################
+
+moc:hasProofStep a owl:ObjectProperty ;
+    rdfs:domain moc:Proof ;
+    rdfs:range moc:ProofStep ;
+    owl:inverseOf moc:proofStepOf ;
+    rdfs:label "has proof step"@en ;
+    rdfs:label "имеет шаг доказательства"@ru .
+
+moc:proofStepOf a owl:ObjectProperty ;
+    rdfs:domain moc:ProofStep ;
+    rdfs:range moc:Proof ;
+    rdfs:label "proof step of"@en ;
+    rdfs:label "шаг доказательства в"@ru .
+
+moc:nextStep a owl:ObjectProperty ;
+    rdfs:domain moc:ProofStep ;
+    rdfs:range moc:ProofStep ;
+    rdfs:label "next step"@en ;
+    rdfs:label "следующий шаг"@ru .
+
+moc:justifies a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "justifies"@en ;
+    rdfs:label "обосновывает"@ru .
+
+moc:hasCase a owl:ObjectProperty ;
+    rdfs:domain moc:Proof ;
+    rdfs:range moc:Case ;
+    rdfs:label "has case"@en ;
+    rdfs:label "имеет случай"@ru .
+
+moc:hasSubproof a owl:ObjectProperty ;
+    rdfs:domain moc:Proof ;
+    rdfs:range moc:Subproof ;
+    rdfs:label "has subproof"@en ;
+    rdfs:label "имеет поддоказательство"@ru .
+
+moc:startsWith a owl:ObjectProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range moc:DocumentSegment ; rdfs:label "starts with"@en ; rdfs:label "начинается с"@ru .
+moc:endsWith a owl:ObjectProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range moc:DocumentSegment ; rdfs:label "ends with"@en ; rdfs:label "заканчивается"@ru .
+
+#################################################################
+# Object properties: expressions, source and external links
+#################################################################
+
+moc:containsExpression a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:MathematicalExpression ;
+    owl:inverseOf moc:occursIn ;
+    rdfs:label "contains expression"@en ;
+    rdfs:label "содержит выражение"@ru .
+
+moc:occursIn a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalExpression ;
+    rdfs:range moc:DocumentSegment ;
+    rdfs:label "occurs in"@en ;
+    rdfs:label "встречается в"@ru .
+
+moc:hasNotation a owl:ObjectProperty ;
+    rdfs:domain moc:MathematicalConcept ;
+    rdfs:range moc:Notation ;
+    owl:inverseOf moc:isNotationOf ;
+    rdfs:label "has notation"@en ;
+    rdfs:label "имеет обозначение"@ru .
+
+moc:isNotationOf a owl:ObjectProperty ;
+    rdfs:domain moc:Notation ;
+    rdfs:range moc:MathematicalConcept ;
+    rdfs:label "is notation of"@en ;
+    rdfs:label "является обозначением"@ru .
+
+moc:extractedFrom a owl:ObjectProperty ;
+    rdfs:domain moc:DocumentSegment ;
+    rdfs:range moc:SourceDocument ;
+    rdfs:label "extracted from"@en ;
+    rdfs:label "извлечено из"@ru .
+
+moc:hasSourceFile a owl:ObjectProperty ; rdfs:range moc:SourceFile ; rdfs:label "has source file"@en ; rdfs:label "имеет исходный файл"@ru .
+moc:hasSourcePage a owl:ObjectProperty ; rdfs:range moc:SourcePage ; rdfs:label "has source page"@en ; rdfs:label "имеет исходную страницу"@ru .
+moc:hasSourceSpan a owl:ObjectProperty ; rdfs:range moc:SourceSpan ; rdfs:label "has source span"@en ; rdfs:label "имеет фрагмент источника"@ru .
+moc:wasExtractedBy a owl:ObjectProperty ; rdfs:range moc:ExtractionTool ; rdfs:label "was extracted by"@en ; rdfs:label "извлечено инструментом"@ru .
+moc:generatedBy a owl:ObjectProperty ; rdfs:range moc:ExtractionRun ; rdfs:label "generated by"@en ; rdfs:label "создано запуском"@ru .
+
+moc:linkedToOntoMathConcept a owl:ObjectProperty ; rdfs:domain moc:MathematicalConcept ; rdfs:range moc:ExternalResource ; rdfs:label "linked to OntoMath concept"@en ; rdfs:label "связано с понятием OntoMath"@ru .
+moc:linkedToWikidataEntity a owl:ObjectProperty ; rdfs:domain moc:MathematicalConcept ; rdfs:range moc:ExternalResource ; rdfs:label "linked to Wikidata entity"@en ; rdfs:label "связано с сущностью Wikidata"@ru .
+moc:hasFormalization a owl:ObjectProperty ; rdfs:domain moc:MathematicalStatement ; rdfs:range moc:Formalization ; rdfs:label "has formalization"@en ; rdfs:label "имеет формализацию"@ru .
+
+#################################################################
+# Datatype properties
+#################################################################
+
+moc:hasText a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has text"@en ; rdfs:label "имеет текст"@ru .
+moc:hasRawText a owl:DatatypeProperty ; rdfs:subPropertyOf moc:hasText ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has raw text"@en ; rdfs:label "имеет исходный текст"@ru .
+moc:hasCleanText a owl:DatatypeProperty ; rdfs:subPropertyOf moc:hasText ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has clean text"@en ; rdfs:label "имеет очищенный текст"@ru .
+moc:hasNormalizedText a owl:DatatypeProperty ; rdfs:subPropertyOf moc:hasText ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has normalized text"@en ; rdfs:label "имеет нормализованный текст"@ru .
+moc:hasLatexSource a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has LaTeX source"@en ; rdfs:label "имеет LaTeX-исходник"@ru .
+moc:hasMathML a owl:DatatypeProperty ; rdfs:domain moc:MathematicalExpression ; rdfs:range xsd:string ; rdfs:label "has MathML"@en ; rdfs:label "имеет MathML"@ru .
+moc:hasPlainText a owl:DatatypeProperty ; rdfs:subPropertyOf moc:hasText ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has plain text"@en ; rdfs:label "имеет простой текст"@ru .
+moc:hasTranslation a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has translation"@en ; rdfs:label "имеет перевод"@ru .
+moc:hasLanguage a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has language"@en ; rdfs:label "имеет язык"@ru .
+moc:hasFunctionalRole a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has functional role"@en ; rdfs:label "имеет функциональную роль"@ru .
+
+moc:hasRoleLabel a owl:DatatypeProperty ; rdfs:domain moc:FunctionalRole ; rdfs:range xsd:string ; rdfs:label "has role label"@en ; rdfs:label "имеет метку роли"@ru .
+moc:hasRoleSynonym a owl:DatatypeProperty ; rdfs:domain moc:FunctionalRole ; rdfs:range xsd:string ; rdfs:label "has role synonym"@en ; rdfs:label "имеет синоним роли"@ru .
+
+moc:hasStartOffset a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:nonNegativeInteger ; rdfs:label "has start offset"@en ; rdfs:label "имеет начальную позицию"@ru .
+moc:hasEndOffset a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:nonNegativeInteger ; rdfs:label "has end offset"@en ; rdfs:label "имеет конечную позицию"@ru .
+moc:hasPageNumber a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:positiveInteger ; rdfs:label "has page number"@en ; rdfs:label "имеет номер страницы"@ru .
+moc:hasLineNumber a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:positiveInteger ; rdfs:label "has line number"@en ; rdfs:label "имеет номер строки"@ru .
+moc:hasParagraphNumber a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:positiveInteger ; rdfs:label "has paragraph number"@en ; rdfs:label "имеет номер абзаца"@ru .
+moc:hasSectionNumber a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has section number"@en ; rdfs:label "имеет номер раздела"@ru .
+moc:hasOrderIndex a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:integer ; rdfs:label "has order index"@en ; rdfs:label "имеет порядковый индекс"@ru .
+moc:hasLabel a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has label"@en ; rdfs:label "имеет метку"@ru .
+moc:hasNumber a owl:DatatypeProperty ; rdfs:domain moc:DocumentSegment ; rdfs:range xsd:string ; rdfs:label "has number"@en ; rdfs:label "имеет номер"@ru .
+
+moc:hasDOI a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has DOI"@en ; rdfs:label "имеет DOI"@ru .
+moc:hasArxivId a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has arXiv id"@en ; rdfs:label "имеет arXiv ID"@ru .
+moc:hasSourceURI a owl:DatatypeProperty ; rdfs:range xsd:anyURI ; rdfs:label "has source URI"@en ; rdfs:label "имеет URI источника"@ru .
+moc:hasPageRange a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has page range"@en ; rdfs:label "имеет диапазон страниц"@ru .
+moc:hasBoundingBox a owl:DatatypeProperty ; rdfs:domain moc:SourceSpan ; rdfs:range xsd:string ; rdfs:label "has bounding box"@en ; rdfs:label "имеет координаты области"@ru .
+moc:wasExtractedAt a owl:DatatypeProperty ; rdfs:range xsd:dateTime ; rdfs:label "was extracted at"@en ; rdfs:label "извлечено в момент"@ru .
+moc:hasConfidence a owl:DatatypeProperty ; rdfs:range xsd:decimal ; rdfs:label "has confidence"@en ; rdfs:label "имеет уверенность"@ru .
+moc:hasExtractionMethod a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has extraction method"@en ; rdfs:label "имеет метод извлечения"@ru .
+moc:hasValidationStatus a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has validation status"@en ; rdfs:label "имеет статус валидации"@ru .
+moc:hasAnnotationStatus a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has annotation status"@en ; rdfs:label "имеет статус аннотации"@ru .
+moc:wasManuallyVerified a owl:DatatypeProperty ; rdfs:range xsd:boolean ; rdfs:label "was manually verified"@en ; rdfs:label "проверено вручную"@ru .
+
+moc:hasMSCCode a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has MSC code"@en ; rdfs:label "имеет код MSC"@ru .
+moc:hasOpenMathSymbol a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has OpenMath symbol"@en ; rdfs:label "имеет символ OpenMath"@ru .
+moc:hasLeanDeclaration a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has Lean declaration"@en ; rdfs:label "имеет декларацию Lean"@ru .
+moc:hasIsabelleEntry a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has Isabelle entry"@en ; rdfs:label "имеет запись Isabelle"@ru .
+moc:hasMizarItem a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has Mizar item"@en ; rdfs:label "имеет элемент Mizar"@ru .
+moc:hasCoqDefinition a owl:DatatypeProperty ; rdfs:range xsd:string ; rdfs:label "has Coq definition"@en ; rdfs:label "имеет определение Coq"@ru .
+
+#################################################################
+# Recommended role individuals
+#################################################################
+
+mp:TheoremRole a moc:FunctionalRole ;
+    rdfs:label "Theorem role"@en ;
+    moc:hasRoleLabel "theorem" ;
+    moc:hasRoleSynonym "thm" ;
+    moc:hasRoleSynonym "теорема" ;
+    moc:mapsToClass moc:Theorem .
+
+mp:LemmaRole a moc:FunctionalRole ;
+    rdfs:label "Lemma role"@en ;
+    moc:hasRoleLabel "lemma" ;
+    moc:hasRoleSynonym "lem" ;
+    moc:hasRoleSynonym "лемма" ;
+    moc:mapsToClass moc:Lemma .
+
+mp:ProofRole a moc:FunctionalRole ;
+    rdfs:label "Proof role"@en ;
+    moc:hasRoleLabel "proof" ;
+    moc:hasRoleSynonym "доказательство" ;
+    moc:hasRoleSynonym "доказ." ;
+    moc:mapsToClass moc:Proof .
+
+mp:DefinitionRole a moc:FunctionalRole ;
+    rdfs:label "Definition role"@en ;
+    moc:hasRoleLabel "definition" ;
+    moc:hasRoleSynonym "def" ;
+    moc:hasRoleSynonym "определение" ;
+    moc:mapsToClass moc:Definition .
+
+mp:ExampleRole a moc:FunctionalRole ;
+    rdfs:label "Example role"@en ;
+    moc:hasRoleLabel "example" ;
+    moc:hasRoleSynonym "ex" ;
+    moc:hasRoleSynonym "пример" ;
+    moc:mapsToClass moc:Example .
+
+mp:CorollaryRole a moc:FunctionalRole ;
+    rdfs:label "Corollary role"@en ;
+    moc:hasRoleLabel "corollary" ;
+    moc:hasRoleSynonym "следствие" ;
+    moc:mapsToClass moc:Corollary .
+
+mp:RemarkRole a moc:FunctionalRole ;
+    rdfs:label "Remark role"@en ;
+    moc:hasRoleLabel "remark" ;
+    moc:hasRoleSynonym "замечание" ;
+    moc:mapsToClass moc:Remark .
+
+mp:EquationRole a moc:FunctionalRole ;
+    rdfs:label "Equation role"@en ;
+    moc:hasRoleLabel "equation" ;
+    moc:hasRoleSynonym "уравнение" ;
+    moc:mapsToClass moc:Equation .
